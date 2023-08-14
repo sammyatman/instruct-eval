@@ -168,6 +168,12 @@ def evaluate(args, subject, model: EvalModel, dev_df, test_df):
 def main(data_dir: str = "data/mmlu", ntrain: int = 5, **kwargs):
     args = Namespace(**locals())
     model = select_model(max_input_length=2048, max_output_length=2, **kwargs)
+    model.load()
+    if model.model and kwargs['run_until_layer'] and kwargs['model_name'] == 'llama':
+        print('Truncating llama')
+        print('Model: ', model.model)
+        run_until_layer = kwargs['run_until_layer']
+        del model.model.model.layers[run_until_layer:]
     print(locals())
 
     subjects = sorted(
